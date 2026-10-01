@@ -1,0 +1,129 @@
+{
+  "name": "hold-up",
+  "displayName": "Hold Up",
+  "description": "A speed bump before you commit, push or deploy in a hurry.",
+  "version": "0.0.1",
+  "publisher": "tob",
+  "private": true,
+  "license": "MIT",
+  "engines": { "vscode": "^1.90.0" },
+  "categories": ["Other"],
+  "main": "./dist/extension.js",
+  "activationEvents": ["onStartupFinished"],
+  "contributes": {
+    "commands": [
+      { "command": "holdUp.installGitHooks", "title": "Hold Up: Install Git Hooks in This Repo" },
+      { "command": "holdUp.uninstallGitHooks", "title": "Hold Up: Remove Git Hooks from This Repo" },
+      { "command": "holdUp.toggle", "title": "Hold Up: Turn On/Off" },
+      { "command": "holdUp.showStatus", "title": "Hold Up: Show Status" }
+    ],
+    "configuration": {
+      "title": "Hold Up",
+      "properties": {
+        "holdUp.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the hold-up modal before commit, push and deploy."
+        },
+        "holdUp.countdownSeconds": {
+          "type": "number",
+          "default": 5,
+          "minimum": 1,
+          "maximum": 60,
+          "order": 1,
+          "description": "Seconds you have to wait before Proceed unlocks."
+        },
+        "holdUp.gate.commit": {
+          "type": "boolean",
+          "default": true,
+          "order": 2,
+          "description": "Hold up before git commit."
+        },
+        "holdUp.gate.push": {
+          "type": "boolean",
+          "default": true,
+          "order": 3,
+          "description": "Hold up before git push."
+        },
+        "holdUp.gate.deploy": {
+          "type": "boolean",
+          "default": true,
+          "order": 4,
+          "description": "Hold up before wrangler deploy and vercel deploy / --prod / promote."
+        },
+        "holdUp.quietSeconds": {
+          "type": "number",
+          "default": 0,
+          "minimum": 0,
+          "order": 5,
+          "description": "After you proceed, skip the modal for the same kind of action for this many seconds. 0 = always ask. Fix-loops still get the modal."
+        },
+        "holdUp.fixLoop.enabled": {
+          "type": "boolean",
+          "default": true,
+          "order": 6,
+          "description": "Escalate (longer wait, 'let him cook' GIF) when you look like you're in a fix-on-fix loop."
+        },
+        "holdUp.fixLoop.commits": {
+          "type": "number",
+          "default": 4,
+          "minimum": 2,
+          "order": 7,
+          "description": "This many commits inside the window counts as a fix-loop."
+        },
+        "holdUp.fixLoop.windowMinutes": {
+          "type": "number",
+          "default": 10,
+          "minimum": 1,
+          "order": 8,
+          "description": "Window, in minutes, used to count commits."
+        },
+        "holdUp.fixLoop.deployAfterCommitSeconds": {
+          "type": "number",
+          "default": 120,
+          "minimum": 0,
+          "order": 9,
+          "description": "A deploy or custom command this soon after a commit counts as a fix-loop."
+        },
+        "holdUp.fixLoop.countdownSeconds": {
+          "type": "number",
+          "default": 15,
+          "minimum": 1,
+          "maximum": 120,
+          "order": 10,
+          "description": "Countdown used during a fix-loop."
+        },
+        "holdUp.customCommands": {
+          "type": "array",
+          "default": [],
+          "order": 11,
+          "markdownDescription": "Extra commands to hold up, e.g. `npm run deploy`, `terraform apply`, `docker push`. The first word is the tool (a shim is created for it, open a new terminal after changing this); the rest must be its first arguments, flags are ignored. `git` is handled by hooks and can't be listed here.",
+          "items": {
+            "type": "object",
+            "required": ["command"],
+            "additionalProperties": false,
+            "properties": {
+              "command": { "type": "string", "description": "e.g. \"npm run deploy\"" },
+              "prod": { "type": "boolean", "default": false, "description": "Show the PROD pill and the extra 'I know this hits prod' checkbox." }
+            }
+          },
+          "examples": [[{ "command": "npm run deploy", "prod": true }, { "command": "terraform apply" }]]
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "node esbuild.js",
+    "watch": "node esbuild.js --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@types/vscode": "^1.90.0",
+    "esbuild": "^0.23.0",
+    "typescript": "^5.5.0",
+    "vitest": "^2.0.0"
+  }
+}
