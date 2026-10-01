@@ -2,6 +2,10 @@
 
 A speed bump before you commit, push or deploy in a hurry. Pops a modal with a hold-up GIF, a countdown and a short checklist. Proceed unlocks when the timer ends and the boxes are ticked.
 
+<p align="center">
+  <img src="media/4cpdo-3210161524.jpg" alt="Squirrel with both paws up: Hold up! Let's think this over first!" width="300">
+</p>
+
 Gates: `git commit`, `git push`, `wrangler deploy`, `vercel` (deploy / `--prod` / promote).
 Fix-loop (4+ commits in 10 min, or a deploy within 2 min of a commit) gets a longer wait and the "let him cook" GIF.
 
